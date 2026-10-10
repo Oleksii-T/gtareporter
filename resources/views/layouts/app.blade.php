@@ -19,11 +19,18 @@
     <meta property="og:locale" content="en_US">
     @yield('meta')
     <link rel="canonical" href="@yield('meta-canonical', rtrim(config('app.url'), '/') . request()->getRequestUri())">
+    <meta name="theme-color" content="#0d0c1a">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="preload" href="{{ asset('fonts/barlow-condensed-800.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ asset('fonts/fonts.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/gta-news.css') }}?v={{ filemtime(public_path('css/gta-news.css')) }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
     @yield('styles')
 </head>
 
 <body>
     <span id="page-top"></span>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     @admin
         @php
             $editUrl = match (Route::currentRouteName()) {
@@ -50,22 +57,24 @@
 
     <x-header />
 
-    @yield('content')
+    <main id="main-content">
+        @yield('content')
+    </main>
 
     <x-footer />
 
     @yield('popups')
-</body>
-
 <script src="{{asset('js/jquery.min.js')}}"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script src="{{asset('js/lazysizes.min.js')}}"></script>
-<script src="{{asset('js/custom.js')}}"></script>
+<script src="{{ asset('js/theme.js') }}" defer></script>
 
 <script>
     window.Laravel = {!!$LaravelDataForJS!!};
 </script>
+
+<script src="{{asset('js/custom.js')}}"></script>
 
 @if (config('services.google_analytics.measurement_id') && !app()->environment('local'))
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.measurement_id') }}"></script>
@@ -80,4 +89,5 @@
 
 @yield('scripts')
 
+</body>
 </html>

@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // \Debugbar::disable();
-        if (isdev()) {
+        if (config('debugbar.enabled') !== false && isdev()) {
             \Debugbar::enable();
         }
 
@@ -90,7 +90,7 @@ class AppServiceProvider extends ServiceProvider
             $class = trim($class, "' ");
 
             // Create the dom document as per the other answers
-            $svg = new \DOMDocument();
+            $svg = new \DOMDocument;
             $svg->load(public_path($path));
             $svg->documentElement->setAttribute('class', $class);
             $output = $svg->saveXML($svg->documentElement);

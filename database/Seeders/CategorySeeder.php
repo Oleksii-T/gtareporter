@@ -16,10 +16,10 @@ class CategorySeeder extends Seeder
     {
         $schemas = [
             [
-                'name' => 'Game News',
-                'meta_title' => 'Game News',
-                'meta_description' => 'Game News',
-                'description' => 'Game News',
+                'name' => 'Latest news',
+                'meta_title' => 'Latest GTA VI News',
+                'meta_description' => 'The latest GTA VI stories, official trailers, characters and news from Leonida.',
+                'description' => 'Your latest dispatch from Vice City and beyond.',
                 'slug' => 'news',
                 'in_menu' => true,
                 'order' => 1,
@@ -27,7 +27,7 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($schemas as $schema) {
-            Category::create($schema);
+            Category::firstOrCreate(['slug' => $schema['slug']], $schema);
         }
     }
 }

@@ -13,7 +13,7 @@
     <div class="contact-layout">
 
         <div class="contact-form-wrap">
-            <form class="contact-form" id="contact-form">
+            <form class="contact-form" id="contact-form" action="{{ route('feedbacks.store') }}" method="post">
                 @csrf
                 <div class="contact-form__field">
                     <label class="contact-form__label" for="contact-name">Name</label>
@@ -31,13 +31,21 @@
                     <label class="contact-form__label" for="contact-text">Message</label>
                     <textarea class="contact-form__textarea" id="contact-text" name="text" rows="6" placeholder="Share the details." required></textarea>
                 </div>
-                <button class="contact-form__btn" type="submit">{{ $page->show('form:cta') }}</button>
+                <button class="contact-form__btn" type="submit">{{ $page->show('form:cta', 'Send message') }}</button>
+                <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
             </form>
         </div>
 
         <div class="contact-side-blocks">
             <div class="contact-block">
-                {!! $page->show('side:content') !!}
+                @if ($page->show('side:content') && $page->show('side:content') !== 'todo')
+                    {!! $page->show('side:content') !!}
+                @else
+                    <span class="eyebrow">LET'S TALK VICE CITY</span>
+                    <h2>Got a story?<br>We're listening.</h2>
+                    <p>Send a news tip, suggest a correction, or get in touch with the publication.</p>
+                    <p>For official game support, visit <a href="https://support.rockstargames.com/">Rockstar Support</a>.</p>
+                @endif
             </div>
         </div>
     </div>
@@ -49,62 +57,47 @@
 @endsection
 
 @section('scripts')
+@if (config('services.recaptcha.public_key'))
 <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.public_key') }}"></script>
+@endif
 <script>
-$(document).ready(function () {
-    $('#contact-form').on('submit', function (e) {
-        e.preventDefault();
-
-        var $form = $(this);
-        var $btn  = $form.find('.contact-form__btn');
-        $btn.prop('disabled', true).text('Sending…');
-
-        grecaptcha.ready(function () {
-            grecaptcha.execute('{{ config('services.recaptcha.public_key') }}', { action: 'contact' }).then(function (token) {
-                $.ajax({
-                    url:    '{{ route('contact-us') }}',
-                    method: 'POST',
-                    data: {
-                        _token:    '{{ csrf_token() }}',
-                        name:      $('#contact-name').val(),
-                        email:     $('#contact-email').val(),
-                        subject:   $('#contact-subject').val(),
-                        text:      $('#contact-text').val(),
-                        recaptcha: token,
-                    },
-                    success: function () {
-                        Swal.fire({
-                            icon:               'success',
-                            title:              'Message sent!',
-                            text:               'We\'ll get back to you within 2–3 business days.',
-                            background:         '#0f0f10',
-                            color:              '#ededed',
-                            confirmButtonColor: '#ededed',
-                            confirmButtonText:  'OK',
-                        });
-                        $form[0].reset();
-                    },
-                    error: function (xhr) {
-                        var msg = 'Something went wrong. Please try again.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            msg = xhr.responseJSON.message;
-                        }
-                        Swal.fire({
-                            icon:               'error',
-                            title:              'Error',
-                            text:               msg,
-                            background:         '#0f0f10',
-                            color:              '#ededed',
-                            confirmButtonColor: '#ededed',
-                        });
-                    },
-                    complete: function () {
-                        $btn.prop('disabled', false).text('Send Message');
-                    },
-                });
+(() => {
+    const form = document.getElementById('contact-form');
+    const button = form.querySelector('button[type="submit"]');
+    const status = document.getElementById('contact-status');
+    const originalLabel = button.textContent;
+    const recaptchaKey = @json(config('services.recaptcha.public_key'));
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (button.disabled) return;
+        button.disabled = true;
+        button.textContent = 'Sending…';
+        status.textContent = '';
+        try {
+            const data = new FormData(form);
+            if (recaptchaKey) {
+                if (!window.grecaptcha) throw new Error('Verification could not load. Please refresh and try again.');
+                await new Promise(resolve => grecaptcha.ready(resolve));
+                data.append('g-recaptcha-response', await grecaptcha.execute(recaptchaKey, { action: 'contact' }));
+            }
+            const response = await fetch(form.action, {
+                method: 'POST', body: data,
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             });
-        });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                const validationMessage = Object.values(result.errors || {}).flat()[0];
+                throw new Error(validationMessage || result.message || 'Please try again.');
+            }
+            status.textContent = 'Message sent. Thanks for getting in touch.';
+            form.reset();
+        } catch (error) {
+            status.textContent = error.message || 'The message could not be sent. Please try again.';
+        } finally {
+            button.disabled = false;
+            button.textContent = originalLabel;
+        }
     });
-});
+})();
 </script>
 @endsection

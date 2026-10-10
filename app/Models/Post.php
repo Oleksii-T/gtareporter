@@ -180,6 +180,11 @@ class Post extends Model
     {
         $blockGroups = $this->block_groups ?? [];
         $blocks = $this->blocks->sortBy('order');
+
+        if ($blockGroups === []) {
+            return $blocks->isEmpty() ? [] : [$blocks];
+        }
+
         $skip = 0;
         $res = [];
 

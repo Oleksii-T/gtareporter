@@ -7,6 +7,13 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+
+// Data-backed routes are registered after the first migration. Without this
+// guard, a fresh installation cannot even boot Artisan to create its tables.
+if (! Schema::hasTable('redirects')) {
+    return;
+}
 
 /*
  *
@@ -46,7 +53,6 @@ Route::prefix('posts')->name('posts.')->group(function () {
 });
 
 Route::get('/', [PageController::class, 'index'])->name('index');
-Route::get('/new-front-page-test', [PageController::class, 'indexNew']);
 Route::get('contact', [PageController::class, 'contactUs'])->name('contact-us');
 Route::post('contact-us', [PageController::class, 'contactUs'])->name('feedbacks.store')->middleware('recaptcha');
 Route::get('about-us', [PageController::class, 'aboutUs'])->name('about-us');

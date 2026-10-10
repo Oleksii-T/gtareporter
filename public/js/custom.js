@@ -91,10 +91,11 @@ $(document).ready(function () {
 
   // ajax pagination
   $(document).on('click', '.pagination a', function (e) {
+    let wraper = $('.pagination-content');
+    if (!wraper.length || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     let url = $(this).attr('href');
     let button = $(this);
-    let wraper = $('.pagination-content');
 
     if (!url) {
       return;

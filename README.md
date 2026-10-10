@@ -1,8 +1,8 @@
-# Game News Starter
+# GTA VI News
 
-A Laravel game news CMS ready for a new site design. It includes posts, categories, tags, games, author profiles, a flexible content builder, view tracking, and an admin panel.
+A Laravel news blog with a GTA VI inspired public design. It includes posts, categories, tags, games, author profiles, a flexible content builder, view tracking, and an admin panel.
 
-The public Blade templates are retained as a functional reference, including their CSS classes. The previous site's styles, fonts, logos, favicons, social preview image, verification tokens, and advertising identity have been removed. AdminLTE, admin/editor styles, and the shared content-block renderer are retained.
+The public site uses midnight purple, sunset accents, condensed editorial headings, and official GTA VI imagery. The CMS, AdminLTE admin/editor styles, vendor pagination views, and shared content-block renderer are retained.
 
 ## Starting a new skin
 
@@ -17,3 +17,13 @@ The header and footer use `APP_NAME` unless overridden through their CMS `site-n
 Google Analytics is optional: set `GA_MEASUREMENT_ID` to enable it outside the local environment. Configure the new site's advertising file and sitemap URL in `public/robots.txt` when deploying.
 
 Existing databases, uploads, and local `.env` values are not reset by this cleanup. Review their site names, page content, metadata, and service IDs before reusing them for a new site; the updated seeders provide neutral defaults for new installations.
+
+## GTA VI News skin
+
+The public site now uses the GTA VI inspired skin in `public/css/gta-news.css` and `public/js/theme.js`, with self-hosted fonts and official editorial imagery. The research and layout decisions are in [docs/design-plan.md](docs/design-plan.md); verification and remaining dependency issues are in [docs/project-health.md](docs/project-health.md).
+
+This workspace runs Sail at **http://localhost:8087**. Its local `.env` uses `APP_PORT=8087`, `FORWARD_DB_PORT=3309`, `VITE_PORT=5187`, and `APP_URL=http://localhost:8087` to avoid neighboring projects. Start it with `./vendor/bin/sail up -d`. The public skin does not require a running Vite development server; `npm run build` builds the existing admin components.
+
+For an empty local database, run migrations and the default seeders, then optionally run `./vendor/bin/sail artisan db:seed --class=GtaViDemoSeeder`. This adds six source-linked starter articles, marked as preview content in their bodies and metadata. It skips existing non-preview articles, does not run on production, and is not called by the default seeder. Replace the starter stories with editorial content through the CMS. Existing CMS header/footer `site-name` values override the GTA VI News wordmark. Set `APP_NAME="GTA VI News"` for metadata and admin identity, and populate policy-page content in the CMS.
+
+Tests require a migrated, seeded `testing` database. With Sail, initialize that database using `./vendor/bin/sail exec -e DB_DATABASE=testing laravel.test php artisan migrate --seed`, then run `./vendor/bin/sail test`. This targets the separate testing database, not the normal local database.

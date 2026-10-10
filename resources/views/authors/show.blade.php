@@ -12,7 +12,7 @@
             <div class="author-bio__avatar-wrap">
                 <img
                     class="author-bio__avatar"
-                    src="{{ $avatar ? $avatar->url : asset('images/empty.png') }}"
+                    src="{{ $avatar ? $avatar->url : asset('images/favicon.svg') }}"
                     alt="{{ $avatar?->alt ?: $author->name }}"
                     title="{{ $avatar?->title ?: $author->name }}"
                 />
@@ -38,6 +38,7 @@
                 <h2 class="section-label">Articles by {{ $author->name }}</h2>
                 <div class="posts-grid">
                     <x-post-cards :posts="$posts" />
+                    {!! $posts->links('vendor.pagination.default') !!}
                 </div>
             </section>
         @endif

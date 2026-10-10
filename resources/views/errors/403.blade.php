@@ -4,12 +4,12 @@
 @section('description', 'UNAUTHORIZED')
 
 @section('content')
-    <main>
+    <div class="error-page">
         <section class="section section-head">
             <h1>403 UNAUTHORIZED</h1>
             Oops! You have no access for this resource...
             <br>
             <a href="{{route("index")}}" class="button">Go Back Home</a>
         </section>
-    </main>
+    </div>
 @endsection

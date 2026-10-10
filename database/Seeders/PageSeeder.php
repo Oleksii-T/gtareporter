@@ -58,6 +58,9 @@ class PageSeeder extends Seeder
             ],
         ];
 
+        $pages[] = ['status' => PageStatus::STATIC, 'title' => 'Editorial Policy', 'link' => 'review-policy'];
+        $pages[] = ['status' => PageStatus::ENTITY, 'title' => 'Author', 'link' => '{author}'];
+
         foreach ($pages as $pageData) {
             Page::updateOrCreate(
                 [

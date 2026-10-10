@@ -26,14 +26,6 @@
                     @endadmin
                 @endif
 
-                {{-- Thumbnail --}}
-                @php $thumbnail = $post->thumbnail(); @endphp
-                @if ($thumbnail)
-                    <div class="post-hero">
-                        <img src="{{ $thumbnail->url }}" alt="{{ $thumbnail->alt }}" title="{{ $thumbnail->title }}" class="post-hero__img" />
-                    </div>
-                @endif
-
                 {{-- Category breadcrumb --}}
                 <div class="post-breadcrumb">
                     <a href="{{ route('categories.show', $category) }}">{{ $category->name }}</a>
@@ -51,7 +43,7 @@
                     @if ($author)
                         <a class="post-byline__author" href="{{ route('authors.show', $author) }}">
                             <img
-                                src="{{ $authorAvatar ? $authorAvatar->url : asset('images/empty.png') }}"
+                                src="{{ $authorAvatar ? $authorAvatar->url : asset('images/favicon.svg') }}"
                                 alt="{{ $authorAvatar?->alt ?: $author->name }}"
                                 class="post-byline__avatar"
                             />
@@ -60,6 +52,14 @@
                     @endif
                     <span class="post-byline__date">{{ $post->published_at?->format('M d, Y') }}</span>
                 </div>
+
+                {{-- Thumbnail --}}
+                @php $thumbnail = $post->thumbnail(); @endphp
+                @if ($thumbnail)
+                    <div class="post-hero">
+                        <img src="{{ $thumbnail->url }}" alt="{{ $thumbnail->alt }}" title="{{ $thumbnail->title }}" class="post-hero__img" />
+                    </div>
+                @endif
 
                 @if ($game)
                     <a class="post-game-card" href="{{ route('games.show', $game) }}">

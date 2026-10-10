@@ -40,7 +40,8 @@ return [
     |
     */
 
-    'debug' => isdev() ? true : ((bool) env('APP_DEBUG', false)),
+    // Authentication is unavailable while configuration is being loaded.
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -210,7 +211,6 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
-
     /*
     |--------------------------------------------------------------------------
     | Custom flag
@@ -218,5 +218,5 @@ return [
     |
     */
 
-    'digest_testing' => env('DIGESTS_TESTING', false)
+    'digest_testing' => env('DIGESTS_TESTING', false),
 ];
